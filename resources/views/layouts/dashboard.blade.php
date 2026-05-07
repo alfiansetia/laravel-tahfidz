@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') - {{ $appName }}</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -14,7 +15,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-color: #2d6a4f;
@@ -156,12 +157,15 @@
             #sidebar {
                 left: calc(var(--sidebar-width) * -1);
             }
+
             #main-content {
                 margin-left: 0;
             }
+
             #sidebar.active {
                 left: 0;
             }
+
             .sidebar-overlay.active {
                 display: block;
             }
@@ -169,6 +173,7 @@
     </style>
     @stack('css')
 </head>
+
 <body>
 
     <!-- Sidebar -->
@@ -206,14 +211,19 @@
                 <h5 class="mb-0 fw-bold">@yield('header')</h5>
             </div>
             <div class="dropdown">
-                <button class="btn btn-link text-dark text-decoration-none dropdown-toggle p-0" type="button" data-bs-toggle="dropdown">
-                    <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}&background=2d6a4f&color=fff" class="rounded-circle me-2" width="32">
+                <button class="btn btn-link text-dark text-decoration-none dropdown-toggle p-0" type="button"
+                    data-bs-toggle="dropdown">
+                    <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}&background=2d6a4f&color=fff"
+                        class="rounded-circle me-2" width="32">
                     <span class="fw-medium">{{ auth()->user()->name }}</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
                     <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profil</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-left me-2"></i> Logout</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-left me-2"></i>
+                            Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -227,7 +237,7 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script>
         $.ajaxSetup({
             headers: {
@@ -241,7 +251,33 @@
                 $('#sidebar-overlay').toggleClass('active');
             });
         });
+
+        function showMessage(icon, title, text) {
+            Swal.fire({
+                icon: icon,
+                title: title,
+                html: text,
+                showConfirmButton: false,
+                timer: 5000
+            });
+        }
+
+        function confirmation(title, text, callback) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    callback();
+                }
+            });
+        }
     </script>
     @stack('js')
 </body>
+
 </html>

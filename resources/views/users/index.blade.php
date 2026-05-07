@@ -116,25 +116,15 @@
                         success: function(res) {
                             $('#userModal').modal('hide');
                             table.ajax.reload();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: res.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
+                            showMessage('success', 'Berhasil!', res.message);
                         },
                         error: function(err) {
                             const errors = err.responseJSON.errors;
                             let errorList = '';
                             for (let key in errors) {
-                                errorList += `<li>${errors[key][0]}</li>`;
+                                errorList += `${errors[key][0]}<br>`;
                             }
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Terjadi Kesalahan',
-                                html: `<ul class="text-start">${errorList}</ul>`
-                            });
+                            showMessage('error', 'Terjadi Kesalahan', errorList);
                         },
                         complete: function() {
                             $('#btnSave').prop('disabled', false).html('Simpan');
@@ -153,7 +143,7 @@
             }
 
             function editUser(id) {
-                $.get(`{{ url('users') }}/${id}/edit`, function(user) {
+                $.get(`{{ url('users') }}/${id}`, function(user) {
                     $('#userId').val(user.id);
                     $('#name').val(user.name);
                     $('#email').val(user.email);
@@ -161,36 +151,21 @@
                     $('#modalTitle').text('Edit User');
                     $('#passwordHelp').removeClass('d-none');
                     $('#userModal').modal('show');
+                }).fail(function(err) {
+                    showMessage('error', 'Terjadi Kesalahan', err.responseJSON.message);
                 });
             }
 
             function deleteUser(id) {
-                Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: "Data user ini akan dihapus secara permanen!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#2d6a4f',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `{{ url('users') }}/${id}`,
-                            method: 'DELETE',
-                            success: function(res) {
-                                table.ajax.reload();
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Dihapus!',
-                                    text: res.message,
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            }
-                        });
-                    }
+                confirmation('Apakah Anda yakin?', 'Data user ini akan dihapus secara permanen!', function() {
+                    $.ajax({
+                        url: `{{ url('users') }}/${id}`,
+                        method: 'DELETE',
+                        success: function(res) {
+                            table.ajax.reload();
+                            showMessage('success', 'Dihapus!', res.message);
+                        }
+                    });
                 });
             }
         </script>
