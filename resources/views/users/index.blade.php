@@ -71,6 +71,9 @@
                 table = $('#userTable').DataTable({
                     processing: true,
                     ajax: "{{ route('users.index') }}",
+                    language: {
+                        url: DATATABLE_LOCALE
+                    },
                     columns: [{
                             data: 'name'
                         },

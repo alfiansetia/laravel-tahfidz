@@ -111,6 +111,9 @@
                 table = $('#surahTable').DataTable({
                     processing: true,
                     ajax: "{{ route('surah.index') }}",
+                    language: {
+                        url: DATATABLE_LOCALE
+                    },
                     columns: [{
                             data: 'nomor'
                         },

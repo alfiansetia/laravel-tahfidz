@@ -305,10 +305,12 @@
                 class="nav-link {{ request()->routeIs('setoran.index') ? 'active' : '' }}">
                 <i class="bi bi-journal-plus"></i> Input Setoran
             </a>
-            <a href="{{ route('setoran.data') }}" class="nav-link {{ request()->routeIs('setoran.data') ? 'active' : '' }}">
+            <a href="{{ route('setoran.data') }}"
+                class="nav-link {{ request()->routeIs('setoran.data') ? 'active' : '' }}">
                 <i class="bi bi-journal-text"></i> Data Setoran
             </a>
-            <a href="{{ route('prediction.index') }}" class="nav-link {{ request()->routeIs('prediction.index') ? 'active' : '' }}">
+            <a href="{{ route('prediction.index') }}"
+                class="nav-link {{ request()->routeIs('prediction.index') ? 'active' : '' }}">
                 <i class="bi bi-cpu"></i> Analisis AI
             </a>
             <hr class="mx-4 text-muted">
@@ -350,7 +352,8 @@
                     <span class="fw-medium">{{ auth()->user()->name }}</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
-                    <li><a class="dropdown-item" href="{{ route('profile.index') }}"><i class="bi bi-person me-2"></i> Profil</a></li>
+                    <li><a class="dropdown-item" href="{{ route('profile.index') }}"><i class="bi bi-person me-2"></i>
+                            Profil</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
@@ -383,6 +386,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
+        const DATATABLE_LOCALE = "{{ asset('datatable.id.json') }}";
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

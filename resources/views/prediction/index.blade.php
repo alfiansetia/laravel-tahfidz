@@ -315,7 +315,7 @@
                         }
                     ],
                     language: {
-                        url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json"
+                        url: DATATABLE_LOCALE
                     },
                     initComplete: function(settings, json) {
                         updateChart(json.data);

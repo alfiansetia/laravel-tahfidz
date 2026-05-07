@@ -99,6 +99,9 @@
                 table = $('#siswaTable').DataTable({
                     processing: true,
                     ajax: "{{ route('siswa.index') }}",
+                    language: {
+                        url: DATATABLE_LOCALE
+                    },
                     columns: [{
                             data: 'nama'
                         },
