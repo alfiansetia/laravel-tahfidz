@@ -8,6 +8,9 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0 fw-bold">Riwayat Seluruh Setoran Siswa</h6>
             <div class="d-flex gap-2">
+                <a href="{{ route('setoran.index') }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Tambah Setoran Baru
+                </a>
                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleFilter()">
                     <i class="bi bi-funnel me-1"></i> Filter
                 </button>
@@ -44,7 +47,8 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-bold">Rentang Tanggal</label>
-                    <div id="reportrange" class="form-control" style="cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                    <div id="reportrange" class="form-control"
+                        style="cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
                         <i class="bi bi-calendar-event me-1"></i>&nbsp;
                         <span></span> <i class="bi bi-chevron-down float-end mt-1"></i>
                     </div>
@@ -85,7 +89,10 @@
                     processing: true,
                     ajax: "{{ route('setoran.data') }}",
                     columns: [{
-                            data: 'tanggal'
+                            data: 'tanggal',
+                            render: function(data) {
+                                return moment(data).format('DD/MM/YYYY');
+                            }
                         },
                         {
                             data: 'siswa.nama'
@@ -105,7 +112,8 @@
                         {
                             data: 'jenis_setoran',
                             render: function(data) {
-                                let badgeClass = data === 'ziyadah' ? 'bg-info text-dark' : 'bg-secondary';
+                                let badgeClass = data === 'ziyadah' ? 'bg-info text-dark' :
+                                    'bg-secondary';
                                 return `<span class="badge ${badgeClass} text-uppercase small">${data}</span>`;
                             }
                         },
@@ -132,7 +140,9 @@
                             }
                         }
                     ],
-                    order: [[0, 'desc']],
+                    order: [
+                        [0, 'desc']
+                    ],
                     language: {
                         url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json"
                     }
@@ -173,7 +183,8 @@
                         '7 Hari Terakhir': [moment().subtract(6, 'days'), moment()],
                         '30 Hari Terakhir': [moment().subtract(29, 'days'), moment()],
                         'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
-                        'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
+                            'month').endOf('month')]
                     },
                     locale: {
                         format: 'DD/MM/YYYY',

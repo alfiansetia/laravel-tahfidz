@@ -6,6 +6,7 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\SurahController;
 use App\Http\Controllers\SetoranController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PredictionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,4 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Analisis Prediksi
+    Route::get('analisis', [PredictionController::class, 'index'])->name('prediction.index');
 });

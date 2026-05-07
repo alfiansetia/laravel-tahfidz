@@ -130,12 +130,13 @@
                 // Initialize Single DatePicker
                 $('#tanggal').daterangepicker({
                     singleDatePicker: true,
+                    autoApply: true,
                     showDropdowns: true,
                     startDate: moment(),
                     minYear: 2020,
                     maxYear: parseInt(moment().format('YYYY'), 10),
                     locale: {
-                        format: 'YYYY-MM-DD',
+                        format: 'DD/MM/YYYY',
                         applyLabel: "Pilih",
                         cancelLabel: "Batal",
                     }
@@ -143,6 +144,14 @@
 
                 $('#setoranForm').on('submit', function(e) {
                     e.preventDefault();
+
+                    // Konversi tanggal DD/MM/YYYY ke YYYY-MM-DD sebelum dikirim ke server
+                    let formData = $(this).serializeArray();
+                    let dateIndex = formData.findIndex(item => item.name === 'tanggal');
+                    if (dateIndex !== -1) {
+                        formData[dateIndex].value = moment(formData[dateIndex].value, 'DD/MM/YYYY').format(
+                            'YYYY-MM-DD');
+                    }
 
                     // FE Validation
                     const maxAyat = parseInt($('#surah_id').find(':selected').data('ayat'));
@@ -166,7 +175,7 @@
                     $.ajax({
                         url: "{{ route('setoran.store') }}",
                         method: "POST",
-                        data: $(this).serialize(),
+                        data: formData,
                         success: function(res) {
                             showMessage('success', 'Berhasil!', res.message);
                             // Reset partial form
@@ -212,6 +221,13 @@
                 $('#displayKelas').text(kelas);
                 $('#selectClassStep').addClass('d-none');
                 $('#inputSetoranStep').removeClass('d-none');
+
+                // Reset form data sebelumnya
+                $('#setoranForm')[0].reset();
+                $('#siswa_id, #surah_id').val(null).trigger('change');
+
+                // Set ulang tanggal ke hari ini agar tidak kosong
+                $('#tanggal').val(moment().format('DD/MM/YYYY'));
 
                 // Load students
                 $.get("{{ route('setoran.siswa') }}", {

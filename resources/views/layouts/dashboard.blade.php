@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet"
@@ -304,9 +305,11 @@
                 class="nav-link {{ request()->routeIs('setoran.index') ? 'active' : '' }}">
                 <i class="bi bi-journal-plus"></i> Input Setoran
             </a>
-            <a href="{{ route('setoran.data') }}"
-                class="nav-link {{ request()->routeIs('setoran.data') ? 'active' : '' }}">
+            <a href="{{ route('setoran.data') }}" class="nav-link {{ request()->routeIs('setoran.data') ? 'active' : '' }}">
                 <i class="bi bi-journal-text"></i> Data Setoran
+            </a>
+            <a href="{{ route('prediction.index') }}" class="nav-link {{ request()->routeIs('prediction.index') ? 'active' : '' }}">
+                <i class="bi bi-cpu"></i> Analisis AI
             </a>
             <hr class="mx-4 text-muted">
             <div class="px-4 mb-2 small text-uppercase fw-bold text-muted" style="letter-spacing: 0.05em;">Master Data
@@ -365,6 +368,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- DateRangePicker JS -->
