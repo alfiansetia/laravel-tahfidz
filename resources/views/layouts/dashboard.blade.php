@@ -15,7 +15,10 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <!-- DateRangePicker CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -102,6 +105,16 @@
             margin-left: var(--sidebar-width);
             min-height: 100vh;
             padding: 24px;
+            transition: all 0.3s;
+        }
+
+        /* Collapsed Sidebar State (Desktop) */
+        body.sidebar-collapsed #sidebar {
+            left: calc(var(--sidebar-width) * -1);
+        }
+
+        body.sidebar-collapsed #main-content {
+            margin-left: 0;
         }
 
         .topbar {
@@ -146,24 +159,29 @@
             border-radius: 8px;
             border: 1px solid #e2e8f0;
         }
+
         .dataTables_wrapper .dataTables_filter input {
             padding: 0.375rem 0.75rem;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             outline: none;
         }
+
         .dataTables_wrapper .dataTables_info {
             padding-top: 1rem;
             font-size: 0.875rem;
             color: #64748b;
         }
+
         .dataTables_wrapper .dataTables_paginate {
             padding-top: 1rem;
         }
+
         .pagination {
             margin-bottom: 0;
             gap: 4px;
         }
+
         .page-item .page-link {
             border-radius: 8px !important;
             border: none;
@@ -171,18 +189,22 @@
             padding: 8px 14px;
             font-size: 0.875rem;
         }
+
         .page-item.active .page-link {
             background-color: var(--primary-color);
             color: white;
         }
+
         .page-link:hover {
             background-color: #f1f5f9;
         }
+
         table.dataTable {
             margin-top: 1.5rem !important;
             margin-bottom: 1.5rem !important;
             border-bottom: 1px solid #f1f5f9 !important;
         }
+
         table.dataTable thead th {
             background-color: #f8fafc;
             padding: 10px 12px !important;
@@ -192,6 +214,7 @@
             color: #64748b;
             border-bottom: 1px solid #e2e8f0 !important;
         }
+
         table.dataTable tbody td {
             padding: 8px 12px !important;
             vertical-align: middle;
@@ -204,6 +227,7 @@
             padding: 0.35rem 0;
             border: 1px solid #e2e8f0;
         }
+
         .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
             padding-left: 1rem;
             color: #334155;
@@ -237,6 +261,27 @@
                 display: block;
             }
         }
+
+        /* DateRangePicker Custom Styling */
+        .daterangepicker td.active,
+        .daterangepicker td.active:hover {
+            background-color: var(--primary-color) !important;
+            border-color: transparent !important;
+            color: #fff !important;
+            border-radius: 4px !important;
+        }
+
+        .daterangepicker td.today {
+            background-color: #f0fdf4;
+            color: var(--primary-color);
+            font-weight: bold;
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .daterangepicker td.today.active {
+            color: #fff !important;
+        }
     </style>
     @stack('css')
 </head>
@@ -255,6 +300,17 @@
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i class="bi bi-grid-fill"></i> Dashboard
             </a>
+            <a href="{{ route('setoran.index') }}"
+                class="nav-link {{ request()->routeIs('setoran.index') ? 'active' : '' }}">
+                <i class="bi bi-journal-plus"></i> Input Setoran
+            </a>
+            <a href="{{ route('setoran.data') }}"
+                class="nav-link {{ request()->routeIs('setoran.data') ? 'active' : '' }}">
+                <i class="bi bi-journal-text"></i> Data Setoran
+            </a>
+            <hr class="mx-4 text-muted">
+            <div class="px-4 mb-2 small text-uppercase fw-bold text-muted" style="letter-spacing: 0.05em;">Master Data
+            </div>
             <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> Master Data User
             </a>
@@ -278,7 +334,7 @@
     <div id="main-content">
         <div class="topbar">
             <div class="d-flex align-items-center">
-                <button class="btn btn-link text-dark p-0 me-3 d-lg-none" id="sidebar-toggle">
+                <button class="btn btn-link text-dark p-0 me-3" id="sidebar-toggle">
                     <i class="bi bi-list fs-3"></i>
                 </button>
                 <h5 class="mb-0 fw-bold">@yield('header')</h5>
@@ -291,7 +347,7 @@
                     <span class="fw-medium">{{ auth()->user()->name }}</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profil</a></li>
+                    <li><a class="dropdown-item" href="{{ route('profile.index') }}"><i class="bi bi-person me-2"></i> Profil</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
@@ -311,6 +367,9 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- DateRangePicker JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
         $.ajaxSetup({
@@ -320,9 +379,20 @@
         });
 
         $(function() {
-            $('#sidebar-toggle, #sidebar-overlay').on('click', function() {
-                $('#sidebar').toggleClass('active');
-                $('#sidebar-overlay').toggleClass('active');
+            $('#sidebar-toggle').on('click', function() {
+                if ($(window).width() > 992) {
+                    // Desktop: Toggle collapse
+                    $('body').toggleClass('sidebar-collapsed');
+                } else {
+                    // Mobile: Toggle slide-in
+                    $('#sidebar').toggleClass('active');
+                    $('#sidebar-overlay').toggleClass('active');
+                }
+            });
+
+            $('#sidebar-overlay').on('click', function() {
+                $('#sidebar').removeClass('active');
+                $('#sidebar-overlay').removeClass('active');
             });
         });
 
