@@ -7,11 +7,29 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0 fw-bold">Daftar Siswa Tahfidz</h6>
-            <button type="button" class="btn btn-primary btn-sm" onclick="addSiswa()">
-                <i class="bi bi-plus-lg me-1"></i> Tambah Siswa
-            </button>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleFilter()">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addSiswa()">
+                    <i class="bi bi-plus-lg me-1"></i> Tambah Siswa
+                </button>
+            </div>
         </div>
         <div class="card-body">
+            <!-- Filter Section -->
+            <div id="filterSection" class="row mb-4 d-none">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Filter Kelas</label>
+                    <select class="form-select select2-filter" id="filterKelas">
+                        <option value="">Semua Kelas</option>
+                        @foreach ($kelas as $k)
+                            <option value="{{ $k }}">{{ $k }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-hover w-100" id="siswaTable">
                     <thead>
@@ -72,6 +90,12 @@
                     dropdownParent: $('#siswaModal')
                 });
 
+                // Initialize Select2 for Filter
+                $('.select2-filter').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Filter Kelas'
+                });
+
                 table = $('#siswaTable').DataTable({
                     processing: true,
                     ajax: "{{ route('siswa.index') }}",
@@ -99,9 +123,12 @@
                             }
                         }
                     ],
-                    language: {
-                        url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json"
-                    }
+                });
+
+                // Trigger filter change (Client Side)
+                $('#filterKelas').on('change', function() {
+                    const val = $(this).val();
+                    table.column(1).search(val).draw();
                 });
 
                 $('#siswaForm').on('submit', function(e) {
@@ -136,6 +163,10 @@
                     });
                 });
             });
+
+            function toggleFilter() {
+                $('#filterSection').toggleClass('d-none');
+            }
 
             function addSiswa() {
                 $('#siswaForm')[0].reset();

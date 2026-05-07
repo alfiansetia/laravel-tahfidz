@@ -7,11 +7,28 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0 fw-bold">Daftar Surah Al-Qur'an</h6>
-            <button type="button" class="btn btn-primary btn-sm" onclick="addSurah()">
-                <i class="bi bi-plus-lg me-1"></i> Tambah Surah
-            </button>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleFilter()">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addSurah()">
+                    <i class="bi bi-plus-lg me-1"></i> Tambah Surah
+                </button>
+            </div>
         </div>
         <div class="card-body">
+            <!-- Filter Section -->
+            <div id="filterSection" class="row mb-4 d-none">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Filter Tempat Turun</label>
+                    <select class="form-select" id="filterTempatTurun">
+                        <option value="">Semua</option>
+                        <option value="Mekah">Mekah</option>
+                        <option value="Madinah">Madinah</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-hover w-100" id="surahTable">
                     <thead>
@@ -137,9 +154,12 @@
                             }
                         }
                     ],
-                    language: {
-                        url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json"
-                    }
+                });
+
+                // Trigger filter change (Client Side)
+                $('#filterTempatTurun').on('change', function() {
+                    const val = $(this).val();
+                    table.column(5).search(val).draw();
                 });
 
                 $('#surahForm').on('submit', function(e) {
@@ -174,6 +194,10 @@
                     });
                 });
             });
+
+            function toggleFilter() {
+                $('#filterSection').toggleClass('d-none');
+            }
 
             function addSurah() {
                 $('#surahForm')[0].reset();
