@@ -12,6 +12,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout']);
 
-Route::get('/dashboard', function () {
-    return "Selamat datang di Dashboard Tahfidz!";
-})->middleware('auth');
+use App\Http\Controllers\UserController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::resource('users', UserController::class);
+});
