@@ -326,7 +326,7 @@
                 <i class="bi bi-journal-bookmark-fill"></i> Master Data Surah
             </a>
             <hr class="mx-4 text-muted">
-            <a href="/logout" class="nav-link text-danger">
+            <a href="javascript:void(0)" onclick="_logout()" class="nav-link text-danger">
                 <i class="bi bi-box-arrow-left"></i> Logout
             </a>
         </div>
@@ -357,8 +357,8 @@
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-left me-2"></i>
-                            Logout</a></li>
+                    <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="_logout()">
+                            <i class="bi bi-box-arrow-left me-2"></i> Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -434,6 +434,12 @@
                 if (result.isConfirmed) {
                     callback();
                 }
+            });
+        }
+
+        function _logout() {
+            confirmation('Logout?', 'Apakah Anda yakin ingin logout?', function() {
+                window.location.href = '/logout';
             });
         }
     </script>
