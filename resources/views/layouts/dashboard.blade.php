@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -138,8 +141,72 @@
         }
 
         /* DataTables Custom */
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            padding: 0.5rem 0.75rem;
+        .dataTables_wrapper .dataTables_length select {
+            padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 0.375rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            outline: none;
+        }
+        .dataTables_wrapper .dataTables_info {
+            padding-top: 1rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            padding-top: 1rem;
+        }
+        .pagination {
+            margin-bottom: 0;
+            gap: 4px;
+        }
+        .page-item .page-link {
+            border-radius: 8px !important;
+            border: none;
+            color: #64748b;
+            padding: 8px 14px;
+            font-size: 0.875rem;
+        }
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .page-link:hover {
+            background-color: #f1f5f9;
+        }
+        table.dataTable {
+            margin-top: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+        table.dataTable thead th {
+            background-color: #f8fafc;
+            padding: 10px 12px !important;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        table.dataTable tbody td {
+            padding: 8px 12px !important;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+
+        /* Select2 Custom */
+        .select2-container--bootstrap-5 .select2-selection {
+            border-radius: 10px;
+            padding: 0.35rem 0;
+            border: 1px solid #e2e8f0;
+        }
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+            padding-left: 1rem;
+            color: #334155;
         }
 
         .sidebar-overlay {
@@ -191,6 +258,12 @@
             <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> Master Data User
             </a>
+            <a href="{{ route('siswa.index') }}" class="nav-link {{ request()->routeIs('siswa.*') ? 'active' : '' }}">
+                <i class="bi bi-person-badge-fill"></i> Master Data Siswa
+            </a>
+            <a href="{{ route('surah.index') }}" class="nav-link {{ request()->routeIs('surah.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-bookmark-fill"></i> Master Data Surah
+            </a>
             <hr class="mx-4 text-muted">
             <a href="/logout" class="nav-link text-danger">
                 <i class="bi bi-box-arrow-left"></i> Logout
@@ -236,6 +309,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
