@@ -18,13 +18,32 @@ class DashboardController extends Controller
             'total_siswa'   => Siswa::count(),
             'setoran_today' => Setoran::whereDate('tanggal', Carbon::today())->count(),
             'total_surah'   => Surah::count(),
-            'lancar_pct'    => Setoran::where('status', 'lancar')->count() > 0
+            'lancar_pct'    => Setoran::count() > 0
                 ? round((Setoran::where('status', 'lancar')->count() / Setoran::count()) * 100)
                 : 0
         ];
 
-        // 2. Data Grafik Tren (7 Hari Terakhir)
+        $kelas = config('kelas');
+
+        // 2. Aktivitas Terbaru (5 terakhir)
+        $recentSetoran = Setoran::with(['siswa', 'surah'])
+            ->orderBy('created_at', 'DESC')
+            ->limit(5)
+            ->get();
+
+        return view('dashboard.index', compact('stats', 'recentSetoran', 'kelas'));
+    }
+
+    public function chartData(Request $request)
+    {
+        $selectedKelas = $request->kelas;
+
         $trendData = Setoran::select(DB::raw('DATE(tanggal) as date'), DB::raw('count(*) as total'))
+            ->when($selectedKelas, function($query) use ($selectedKelas) {
+                return $query->whereHas('siswa', function($q) use ($selectedKelas) {
+                    $q->where('kelas', $selectedKelas);
+                });
+            })
             ->where('tanggal', '>=', Carbon::now()->subDays(6))
             ->groupBy('date')
             ->orderBy('date', 'ASC')
@@ -33,22 +52,30 @@ class DashboardController extends Controller
         $chartLabels = [];
         $chartValues = [];
 
-        // Isi data kosong jika ada hari yang tidak ada setoran
+        $days = [
+            'Sun' => 'Min',
+            'Mon' => 'Sen',
+            'Tue' => 'Sel',
+            'Wed' => 'Rab',
+            'Thu' => 'Kam',
+            'Fri' => 'Jum',
+            'Sat' => 'Sab'
+        ];
+
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i)->format('Y-m-d');
-            $label = Carbon::now()->subDays($i)->format('D'); // Mon, Tue, etc
-            $chartLabels[] = $label;
+            $carbon = Carbon::now()->subDays($i);
+            $date = $carbon->format('Y-m-d');
+            $dayLabel = $days[$carbon->format('D')];
+            
+            $chartLabels[] = $dayLabel;
 
             $found = $trendData->firstWhere('date', $date);
             $chartValues[] = $found ? $found->total : 0;
         }
 
-        // 3. Aktivitas Terbaru (5 terakhir)
-        $recentSetoran = Setoran::with(['siswa', 'surah'])
-            ->orderBy('created_at', 'DESC')
-            ->limit(5)
-            ->get();
-
-        return view('dashboard.index', compact('stats', 'chartLabels', 'chartValues', 'recentSetoran'));
+        return response()->json([
+            'labels' => $chartLabels,
+            'values' => $chartValues
+        ]);
     }
 }

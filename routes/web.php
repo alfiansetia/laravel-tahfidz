@@ -22,6 +22,7 @@ Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart', [DashboardController::class, 'chartData'])->name('dashboard.chart');
 
     Route::resource('users', UserController::class)->except(['edit']);
     Route::resource('siswa', SiswaController::class)->except(['edit']);

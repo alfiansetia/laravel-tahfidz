@@ -73,8 +73,18 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4 h-100">
                 <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h6 class="fw-bold mb-0">Tren Setoran 7 Hari Terakhir</h6>
-                    <span class="badge bg-light text-muted fw-normal px-3 py-2 rounded-pill">Aktivitas Mingguan</span>
+                    <div>
+                        <h6 class="fw-bold mb-0">Tren Setoran 7 Hari Terakhir</h6>
+                        <small class="text-muted">Aktivitas Mingguan</small>
+                    </div>
+                    <div style="width: 150px;">
+                        <select id="filterChartKelas" class="form-select form-select-sm rounded-pill border-light bg-light">
+                            <option value="">Semua Kelas</option>
+                            @foreach ($kelas as $k)
+                                <option value="{{ $k }}">{{ $k }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="card-body p-4">
                     <canvas id="trendChart" style="height: 300px; width: 100%;"></canvas>
@@ -146,13 +156,13 @@
                 gradient.addColorStop(0, 'rgba(45, 106, 79, 0.2)');
                 gradient.addColorStop(1, 'rgba(45, 106, 79, 0)');
 
-                new Chart(ctx, {
+                let trendChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: {!! json_encode($chartLabels) !!},
+                        labels: [],
                         datasets: [{
                             label: 'Jumlah Setoran',
-                            data: {!! json_encode($chartValues) !!},
+                            data: [],
                             borderColor: '#2d6a4f',
                             backgroundColor: gradient,
                             fill: true,
@@ -205,6 +215,24 @@
                             }
                         }
                     }
+                });
+
+                function loadChartData(kelas = '') {
+                    $.get("{{ route('dashboard.chart') }}", {
+                        kelas: kelas
+                    }, function(res) {
+                        trendChart.data.labels = res.labels;
+                        trendChart.data.datasets[0].data = res.values;
+                        trendChart.update();
+                    });
+                }
+
+                // Initial Load
+                loadChartData();
+
+                // On Change Filter
+                $('#filterChartKelas').on('change', function() {
+                    loadChartData($(this).val());
                 });
             });
         </script>
