@@ -32,7 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('setoran/data', [SetoranController::class, 'data'])->name('setoran.data');
     Route::get('setoran/siswa', [SetoranController::class, 'getSiswaByKelas'])->name('setoran.siswa');
     Route::post('setoran', [SetoranController::class, 'store'])->name('setoran.store');
-    Route::get('setoran/history/{siswa}', [SetoranController::class, 'history'])->name('setoran.history');
+    Route::get('setoran/history/{siswa?}', [SetoranController::class, 'history'])->name('setoran.history');
+    Route::get('setoran/{setoran}', [SetoranController::class, 'show'])->name('setoran.show');
+    Route::put('setoran/{setoran}', [SetoranController::class, 'update'])->name('setoran.update');
     Route::delete('setoran/{setoran}', [SetoranController::class, 'destroy'])->name('setoran.destroy');
 
     // Profile Routes

@@ -19,12 +19,34 @@ class SetoranController extends Controller
     public function data(Request $request)
     {
         if ($request->ajax()) {
-            $data = Setoran::with(['siswa', 'surah'])->latest('tanggal')->latest('id')->get();
+            $query = Setoran::with(['siswa', 'surah']);
+
+            if ($request->kelas) {
+                $query->whereHas('siswa', function($q) use ($request) {
+                    $q->where('kelas', $request->kelas);
+                });
+            }
+
+            if ($request->jenis) {
+                $query->where('jenis_setoran', $request->jenis);
+            }
+
+            if ($request->status) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->start_date && $request->end_date) {
+                $query->whereBetween('tanggal', [$request->start_date, $request->end_date]);
+            }
+
+            $data = $query->latest('tanggal')->latest('id')->get();
             return response()->json(['data' => $data]);
         }
 
         $kelas = config('kelas');
-        return view('setoran.data', compact('kelas'));
+        $kelas = config('kelas');
+        $surahs = Surah::orderBy('nomor', 'asc')->get();
+        return view('setoran.data', compact('kelas', 'surahs'));
     }
 
     public function getSiswaByKelas(Request $request)
@@ -59,6 +81,38 @@ class SetoranController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data setoran berhasil disimpan'
+        ]);
+    }
+
+    public function show(Setoran $setoran)
+    {
+        return response()->json($setoran->load(['siswa', 'surah']));
+    }
+
+    public function update(Request $request, Setoran $setoran)
+    {
+        $validated = $request->validate([
+            'surah_id' => 'required|exists:surah,id',
+            'ayat_dari' => 'required|integer|min:1',
+            'ayat_sampai' => 'required|integer|min:1|gte:ayat_dari',
+            'jenis_setoran' => 'required|in:ziyadah,murojaah',
+            'status' => 'required|in:lancar,cukup,kurang',
+            'tanggal' => 'required|date',
+        ]);
+
+        $surah = Surah::find($request->surah_id);
+        if ($request->ayat_sampai > $surah->jumlah_ayat) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Ayat sampai tidak boleh melebihi jumlah ayat surah {$surah->nama_latin} ({$surah->jumlah_ayat} ayat)."
+            ], 422);
+        }
+
+        $setoran->update($validated);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data setoran berhasil diperbarui'
         ]);
     }
 

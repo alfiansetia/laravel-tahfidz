@@ -18,35 +18,35 @@
         </div>
         <div class="card-body">
             <!-- Filter Section -->
-            <div id="filterSection" class="row mb-4 d-none">
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold">Filter Kelas</label>
+            <div id="filterSection" class="row mb-4 d-none g-2">
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">Kelas</label>
                     <select class="form-select select2-filter" id="filterKelas">
-                        <option value="">Semua Kelas</option>
+                        <option value="">Semua</option>
                         @foreach ($kelas as $k)
                             <option value="{{ $k }}">{{ $k }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold">Filter Jenis</label>
-                    <select class="form-select" id="filterJenis">
-                        <option value="">Semua Jenis</option>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">Jenis</label>
+                    <select class="form-select select2-filter" id="filterJenis">
+                        <option value="">Semua</option>
                         <option value="ziyadah">Ziyadah</option>
                         <option value="murojaah">Murojaah</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold">Filter Status</label>
-                    <select class="form-select" id="filterStatus">
-                        <option value="">Semua Status</option>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">Status</label>
+                    <select class="form-select select2-filter" id="filterStatus">
+                        <option value="">Semua</option>
                         <option value="lancar">Lancar</option>
                         <option value="cukup">Cukup</option>
                         <option value="kurang">Kurang</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold">Rentang Tanggal</label>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Rentang Tanggal</label>
                     <div id="reportrange" class="form-control"
                         style="cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
                         <i class="bi bi-calendar-event me-1"></i>&nbsp;
@@ -54,6 +54,11 @@
                     </div>
                     <input type="hidden" id="startDate">
                     <input type="hidden" id="endDate">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-primary w-100 shadow-sm" id="btnTerapkan">
+                        <i class="bi bi-search me-1"></i> Filter
+                    </button>
                 </div>
             </div>
 
@@ -76,18 +81,109 @@
         </div>
     </div>
 
+    <!-- Modal Edit Setoran -->
+    <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-sm">
+                <div class="modal-header border-bottom-0 pt-4 px-4">
+                    <h5 class="modal-title fw-bold">Edit Data Setoran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formEdit">
+                    @csrf
+                    <input type="hidden" name="id" id="edit_id">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nama Siswa</label>
+                            <input type="text" class="form-control bg-light" id="edit_siswa_nama" readonly>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Tanggal</label>
+                                <input type="text" name="tanggal" id="edit_tanggal" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Jenis Setoran</label>
+                                <select name="jenis_setoran" id="edit_jenis_setoran" class="form-select" required>
+                                    <option value="ziyadah">Ziyadah</option>
+                                    <option value="murojaah">Murojaah</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Pilih Surah</label>
+                            <select name="surah_id" id="edit_surah_id" class="form-select select2-modal" required>
+                                @foreach ($surahs as $s)
+                                    <option value="{{ $s->id }}">{{ $s->nomor }}. {{ $s->nama_latin }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Ayat Dari</label>
+                                <input type="number" name="ayat_dari" id="edit_ayat_dari" class="form-control"
+                                    required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Ayat Sampai</label>
+                                <input type="number" name="ayat_sampai" id="edit_ayat_sampai" class="form-control"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label small fw-bold">Status Kelancaran</label>
+                            <select name="status" id="edit_status" class="form-select" required>
+                                <option value="lancar">Lancar</option>
+                                <option value="cukup">Cukup</option>
+                                <option value="kurang">Kurang</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pb-4 px-4">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @push('js')
         <script>
             let table;
             $(function() {
                 $('.select2-filter').select2({
                     theme: 'bootstrap-5',
-                    placeholder: 'Filter Kelas'
+                });
+
+                $('.select2-modal').select2({
+                    theme: 'bootstrap-5',
+                    dropdownParent: $('#modalEdit'),
+                    width: '100%'
+                });
+
+                $('#edit_tanggal').daterangepicker({
+                    singleDatePicker: true,
+                    autoApply: true,
+                    locale: {
+                        format: 'DD/MM/YYYY'
+                    }
                 });
 
                 table = $('#setoranTable').DataTable({
                     processing: true,
-                    ajax: "{{ route('setoran.data') }}",
+                    serverSide: false, // Kita gunakan client-side processing tapi data dipanggil via AJAX dengan filter
+                    ajax: {
+                        url: "{{ route('setoran.data') }}",
+                        data: function(d) {
+                            d.kelas = $('#filterKelas').val();
+                            d.jenis = $('#filterJenis').val();
+                            d.status = $('#filterStatus').val();
+                            d.start_date = $('#startDate').val();
+                            d.end_date = $('#endDate').val();
+                        }
+                    },
                     columns: [{
                             data: 'tanggal',
                             render: function(data) {
@@ -133,10 +229,15 @@
                             searchable: false,
                             render: function(data) {
                                 return `
-                            <button class="btn btn-outline-danger btn-sm" onclick="deleteSetoran(${data})">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        `;
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary btn-sm" onclick="editSetoran(${data})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteSetoran(${data})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                `;
                             }
                         }
                     ],
@@ -148,27 +249,40 @@
                     }
                 });
 
-                $('#filterKelas').on('change', function() {
-                    const val = $(this).val();
-                    table.column(2).search(val).draw();
+                $('#formEdit').on('submit', function(e) {
+                    e.preventDefault();
+                    let id = $('#edit_id').val();
+                    let url = `{{ url('setoran') }}/${id}`;
+
+                    let formData = $(this).serializeArray();
+                    // Konversi format DD/MM/YYYY ke YYYY-MM-DD sebelum dikirim ke backend
+                    let tanggalIdx = formData.findIndex(x => x.name === 'tanggal');
+                    if (tanggalIdx !== -1) {
+                        formData[tanggalIdx].value = moment(formData[tanggalIdx].value, 'DD/MM/YYYY').format(
+                            'YYYY-MM-DD');
+                    }
+
+                    $.ajax({
+                        url: url,
+                        method: 'PUT',
+                        data: $.param(formData),
+                        success: function(res) {
+                            $('#modalEdit').modal('hide');
+                            table.ajax.reload();
+                            showMessage('success', 'Berhasil', res.message);
+                        },
+                        error: function(err) {
+                            showMessage('error', 'Gagal', err.responseJSON.message);
+                        }
+                    });
                 });
 
-                $('#filterJenis').on('change', function() {
-                    const val = $(this).val();
-                    table.column(5).search(val).draw();
-                });
-
-                $('#filterStatus').on('change', function() {
-                    const val = $(this).val();
-                    table.column(6).search(val).draw();
-                });
-
-                // Date Range Picker Logic
+                // DateRangePicker untuk Filter
                 var start = moment().subtract(29, 'days');
                 var end = moment();
 
                 function cb(start, end) {
-                    $('#reportrange span').html(start.format('DD MMM YYYY') + ' - ' + end.format('DD MMM YYYY'));
+                    $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
                     $('#startDate').val(start.format('YYYY-MM-DD'));
                     $('#endDate').val(end.format('YYYY-MM-DD'));
                     if (table) table.draw();
@@ -194,28 +308,31 @@
                     }
                 }, cb);
 
-                // Initial clear or set range
                 $('#reportrange span').html('Semua Tanggal');
                 $('#startDate, #endDate').val('');
 
-                // Custom Filter Logic for Date Range
-                $.fn.dataTable.ext.search.push(
-                    function(settings, data, dataIndex) {
-                        var min = $('#startDate').val();
-                        var max = $('#endDate').val();
-                        var date = data[0]; // Kolom Tanggal ada di index 0
-
-                        if (min === '' && max === '') return true;
-                        if (min === '' && date <= max) return true;
-                        if (max === '' && date >= min) return true;
-                        if (date >= min && date <= max) return true;
-                        return false;
-                    }
-                );
+                $('#btnTerapkan').click(function() {
+                    table.ajax.reload();
+                });
             });
 
             function toggleFilter() {
                 $('#filterSection').toggleClass('d-none');
+            }
+
+            function editSetoran(id) {
+                $.get(`{{ url('setoran') }}/${id}`, function(res) {
+                    $('#edit_id').val(res.id);
+                    $('#edit_siswa_nama').val(res.siswa.nama);
+                    $('#edit_tanggal').data('daterangepicker').setStartDate(moment(res.tanggal).format('DD/MM/YYYY'));
+                    $('#edit_tanggal').data('daterangepicker').setEndDate(moment(res.tanggal).format('DD/MM/YYYY'));
+                    $('#edit_jenis_setoran').val(res.jenis_setoran);
+                    $('#edit_surah_id').val(res.surah_id).trigger('change');
+                    $('#edit_ayat_dari').val(res.ayat_dari);
+                    $('#edit_ayat_sampai').val(res.ayat_sampai);
+                    $('#edit_status').val(res.status);
+                    $('#modalEdit').modal('show');
+                });
             }
 
             function deleteSetoran(id) {
