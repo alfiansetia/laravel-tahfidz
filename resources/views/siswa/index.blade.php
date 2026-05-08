@@ -63,7 +63,7 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold small">Kelas</label>
                             <select class="form-select select2" name="kelas" id="kelas" required>
-                                <option value=""></option>
+                                <option value="">Pilih Kelas</option>
                                 @foreach ($kelas as $k)
                                     <option value="{{ $k }}">{{ $k }}</option>
                                 @endforeach
@@ -86,14 +86,12 @@
                 // Initialize Select2
                 $('.select2').select2({
                     theme: 'bootstrap-5',
-                    placeholder: 'Pilih Kelas',
                     dropdownParent: $('#siswaModal')
                 });
 
                 // Initialize Select2 for Filter
                 $('.select2-filter').select2({
                     theme: 'bootstrap-5',
-                    placeholder: 'Filter Kelas'
                 });
 
                 table = $('#siswaTable').DataTable({
@@ -131,7 +129,8 @@
                 // Trigger filter change (Client Side)
                 $('#filterKelas').on('change', function() {
                     const val = $(this).val();
-                    table.column(1).search(val).draw();
+                    // Gunakan regex ^val$ untuk mencari yang persis sama
+                    table.column(1).search(val ? '^' + val + '$' : '', true, false).draw();
                 });
 
                 $('#siswaForm').on('submit', function(e) {
