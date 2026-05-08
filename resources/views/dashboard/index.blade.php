@@ -129,7 +129,7 @@
                         @endforelse
                     </div>
                     <div class="text-center mt-3">
-                        <a href="{{ route('setoran.history') }}" class="small text-decoration-none">Lihat Semua Riwayat <i
+                        <a href="{{ route('setoran.data') }}" class="small text-decoration-none">Lihat Semua Riwayat <i
                                 class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>

@@ -16,7 +16,9 @@ Route::get('/', function () {
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -25,17 +27,19 @@ Route::middleware('auth')->group(function () {
     Route::resource('siswa', SiswaController::class)->except(['edit']);
     Route::resource('surah', SurahController::class)->except(['edit']);
 
-    // Route Setoran
-    Route::get('/setoran/history', [SetoranController::class, 'history'])->name('setoran.history');
-    Route::get('/setoran/data', [SetoranController::class, 'data'])->name('setoran.data');
-    Route::get('/setoran/siswa', [SetoranController::class, 'getSiswaByKelas'])->name('setoran.siswa');
-    Route::resource('setoran', SetoranController::class);
+    // Setoran Routes
+    Route::get('setoran', [SetoranController::class, 'index'])->name('setoran.index');
+    Route::get('setoran/data', [SetoranController::class, 'data'])->name('setoran.data');
+    Route::get('setoran/siswa', [SetoranController::class, 'getSiswaByKelas'])->name('setoran.siswa');
+    Route::post('setoran', [SetoranController::class, 'store'])->name('setoran.store');
+    Route::get('setoran/history/{siswa}', [SetoranController::class, 'history'])->name('setoran.history');
+    Route::delete('setoran/{setoran}', [SetoranController::class, 'destroy'])->name('setoran.destroy');
 
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
+    // Profile Routes
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
-    // AI Analysis
-    Route::get('/prediction', [PredictionController::class, 'index'])->name('prediction.index');
+    // Analisis Prediksi
+    Route::get('analisis', [PredictionController::class, 'index'])->name('prediction.index');
 });

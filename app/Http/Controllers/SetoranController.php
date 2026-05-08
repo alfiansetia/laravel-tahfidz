@@ -2,99 +2,82 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Setoran;
 use App\Models\Siswa;
 use App\Models\Surah;
+use App\Models\Setoran;
 use Illuminate\Http\Request;
 
 class SetoranController extends Controller
 {
     public function index()
     {
-        $surahs = Surah::orderBy('nomor', 'asc')->get();
-        $kelas = config('kelas');
-        return view('setoran.index', compact('surahs', 'kelas'));
-    }
-
-    // Fungsi baru untuk menampilkan HALAMAN riwayat
-    public function history()
-    {
         $kelas = config('kelas');
         $surahs = Surah::orderBy('nomor', 'asc')->get();
-        return view('setoran.data', compact('kelas', 'surahs'));
+        return view('setoran.index', compact('kelas', 'surahs'));
     }
 
-    // Fungsi untuk mengambil DATA mentah (JSON) untuk tabel
     public function data(Request $request)
     {
-        $query = Setoran::with(['siswa', 'surah']);
-
-        if ($request->kelas) {
-            $query->whereHas('siswa', function ($q) use ($request) {
-                $q->where('kelas', $request->kelas);
-            });
+        if ($request->ajax()) {
+            $data = Setoran::with(['siswa', 'surah'])->latest('tanggal')->latest('id')->get();
+            return response()->json(['data' => $data]);
         }
 
-        if ($request->jenis) {
-            $query->where('jenis_setoran', $request->jenis);
-        }
-
-        if ($request->start_date && $request->end_date) {
-            $query->whereBetween('tanggal', [$request->start_date, $request->end_date]);
-        }
-
-        return response()->json(['data' => $query->orderBy('tanggal', 'desc')->get()]);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'siswa_id'      => 'required|exists:siswa,id',
-            'surah_id'      => 'required|exists:surah,id',
-            'tanggal'       => 'required|date',
-            'jenis_setoran' => 'required|in:ziyadah,murojaah',
-            'ayat_dari'     => 'required|numeric|min:1',
-            'ayat_sampai'   => 'required|numeric|min:1',
-            'status'        => 'required|in:lancar,cukup,kurang',
-        ]);
-
-        Setoran::create($request->all());
-
-        return response()->json(['message' => 'Data setoran berhasil disimpan!']);
-    }
-
-    public function show($id)
-    {
-        $setoran = Setoran::with(['siswa', 'surah'])->findOrFail($id);
-        return response()->json($setoran);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'surah_id'      => 'required|exists:surah,id',
-            'tanggal'       => 'required|date',
-            'jenis_setoran' => 'required|in:ziyadah,murojaah',
-            'ayat_dari'     => 'required|numeric|min:1',
-            'ayat_sampai'   => 'required|numeric|min:1',
-            'status'        => 'required|in:lancar,cukup,kurang',
-        ]);
-
-        $setoran = Setoran::findOrFail($id);
-        $setoran->update($request->all());
-
-        return response()->json(['message' => 'Data setoran berhasil diperbarui!']);
-    }
-
-    public function destroy($id)
-    {
-        Setoran::findOrFail($id)->delete();
-        return response()->json(['message' => 'Data setoran berhasil dihapus!']);
+        $kelas = config('kelas');
+        return view('setoran.data', compact('kelas'));
     }
 
     public function getSiswaByKelas(Request $request)
     {
-        $siswas = Siswa::where('kelas', $request->kelas)->orderBy('nama', 'asc')->get();
-        return response()->json($siswas);
+        $siswa = Siswa::where('kelas', $request->kelas)->orderBy('nama', 'asc')->get();
+        return response()->json($siswa);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'siswa_id' => 'required|exists:siswa,id',
+            'surah_id' => 'required|exists:surah,id',
+            'ayat_dari' => 'required|integer|min:1',
+            'ayat_sampai' => 'required|integer|min:1|gte:ayat_dari',
+            'jenis_setoran' => 'required|in:ziyadah,murojaah',
+            'status' => 'required|in:lancar,cukup,kurang',
+            'tanggal' => 'required|date',
+        ]);
+
+        // Validasi jumlah ayat tidak melebihi total ayat surah
+        $surah = Surah::find($request->surah_id);
+        if ($request->ayat_sampai > $surah->jumlah_ayat) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Ayat sampai tidak boleh melebihi jumlah ayat surah {$surah->nama_latin} ({$surah->jumlah_ayat} ayat)."
+            ], 422);
+        }
+
+        Setoran::create($validated);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data setoran berhasil disimpan'
+        ]);
+    }
+
+    public function history(int $siswa_id)
+    {
+        $history = Setoran::with('surah')
+            ->where('siswa_id', $siswa_id)
+            ->latest('tanggal')
+            ->latest('id')
+            ->get();
+        return response()->json($history);
+    }
+
+    public function destroy(Setoran $setoran)
+    {
+        $setoran->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data setoran berhasil dihapus'
+        ]);
     }
 }

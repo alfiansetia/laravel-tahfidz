@@ -305,8 +305,8 @@
                 class="nav-link {{ request()->routeIs('setoran.index') ? 'active' : '' }}">
                 <i class="bi bi-journal-plus"></i> Input Setoran
             </a>
-            <a href="{{ route('setoran.history') }}"
-                class="nav-link {{ request()->routeIs('setoran.history') ? 'active' : '' }}">
+            <a href="{{ route('setoran.data') }}"
+                class="nav-link {{ request()->routeIs('setoran.data') ? 'active' : '' }}">
                 <i class="bi bi-journal-text"></i> Data Setoran
             </a>
             <a href="{{ route('prediction.index') }}"
