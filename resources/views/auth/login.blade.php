@@ -163,7 +163,7 @@
             <div class="brand-logo">
                 T
             </div>
-            <h4>Sistem Tahfidz</h4>
+            <h4>{{ $appName }}</h4>
             <p>Silakan masuk ke akun Anda</p>
         </div>
         <div class="login-body">
