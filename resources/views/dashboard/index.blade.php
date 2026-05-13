@@ -122,7 +122,8 @@
                                         <h6 class="mb-1 fw-bold small text-truncate" style="max-width: 150px;">
                                             {{ $setoran->siswa->nama }}</h6>
                                         <p class="mb-0 text-muted smaller">Surah {{ $setoran->surah->nama_latin }}
-                                            ({{ $setoran->ayat_dari }}-{{ $setoran->ayat_sampai }})</p>
+                                            ({{ $setoran->ayat_dari }}-{{ $setoran->ayat_sampai }})
+                                        </p>
                                     </div>
                                     <div class="text-end">
                                         <span
@@ -130,7 +131,7 @@
                                             {{ ucfirst($setoran->status) }}
                                         </span>
                                         <p class="mb-0 smaller text-muted mt-1" style="font-size: 0.7rem;">
-                                            {{ $setoran->created_at->diffForHumans() }}</p>
+                                            {{ $setoran->tanggal_human }}</p>
                                     </div>
                                 </div>
                             </div>
