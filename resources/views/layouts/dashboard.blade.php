@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" href="{{ asset('logo.png') }}" type="image/png">
     <title>@yield('title') - {{ $appName }}</title>
 
     <!-- Bootstrap 5 CSS -->
@@ -292,8 +293,9 @@
     <!-- Sidebar -->
     <div id="sidebar">
         <div class="sidebar-header">
-            <a href="#" class="sidebar-brand">
-                <div class="brand-icon">T</div>
+            <a href="{{ route('dashboard') }}" class="sidebar-brand">
+                <div class="brand-icon"><img src="{{ asset('logo.png') }}" alt="" width="32" height="32">
+                </div>
                 <span>{{ $appName }}</span>
             </a>
         </div>
