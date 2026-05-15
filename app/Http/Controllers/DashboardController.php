@@ -27,7 +27,7 @@ class DashboardController extends Controller
 
         // 2. Aktivitas Terbaru (5 terakhir)
         $recentSetoran = Setoran::with(['siswa', 'surah'])
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('tanggal', 'DESC')
             ->limit(5)
             ->get();
 
@@ -39,8 +39,8 @@ class DashboardController extends Controller
         $selectedKelas = $request->kelas;
 
         $trendData = Setoran::select(DB::raw('DATE(tanggal) as date'), DB::raw('count(*) as total'))
-            ->when($selectedKelas, function($query) use ($selectedKelas) {
-                return $query->whereHas('siswa', function($q) use ($selectedKelas) {
+            ->when($selectedKelas, function ($query) use ($selectedKelas) {
+                return $query->whereHas('siswa', function ($q) use ($selectedKelas) {
                     $q->where('kelas', $selectedKelas);
                 });
             })
@@ -66,7 +66,7 @@ class DashboardController extends Controller
             $carbon = Carbon::now()->subDays($i);
             $date = $carbon->format('Y-m-d');
             $dayLabel = $days[$carbon->format('D')];
-            
+
             $chartLabels[] = $dayLabel;
 
             $found = $trendData->firstWhere('date', $date);
